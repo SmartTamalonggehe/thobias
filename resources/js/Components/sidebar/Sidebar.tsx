@@ -96,7 +96,7 @@ const Sidebar: FC<Props> = ({ type = "admin" }) => {
                                             href={menu.href || "#"}
                                             className={`flex w-full dark:text-neutral items-center p-2 hover:text-neutral hover:underline transition-all duration-300 rounded-lg group ${
                                                 isActive &&
-                                                "dark:text-secondary text-secondary font-bold"
+                                                "text-primary font-bold"
                                             }`}
                                             title={name}
                                         >

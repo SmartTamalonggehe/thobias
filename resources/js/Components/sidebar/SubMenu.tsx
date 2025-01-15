@@ -73,7 +73,7 @@ const SubMenu: FC<Props> = ({
                                         href={subMenu.href || "#"}
                                         className={`flex items-center mx-3 py-2 transition-colors duration-300 transform hover:text-neutral hover:underline rounded-lg group ${
                                             isActiveSub &&
-                                            "text-accent font-bold"
+                                            "text-primary font-bold"
                                         }`}
                                     >
                                         <span className="mx-2">

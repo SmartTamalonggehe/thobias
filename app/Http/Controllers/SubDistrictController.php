@@ -4,15 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\SubDistrict;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class SubDistrictController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $limit = $request->query('limit', 10);
+        $data = SubDistrict::paginate($limit);
+        return Inertia::render('shipping/subDistrict/Index', [
+            'data' => $data
+        ]);
     }
 
     /**

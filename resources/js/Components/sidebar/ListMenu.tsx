@@ -3,7 +3,7 @@ import MenuTypes from "@/types/MenuTypes";
 
 import { BsBook, BsHouseDoor } from "react-icons/bs";
 
-const createUrl = (path: string) => `/${path}`;
+const createUrl = (path: string) => `/admin${path}`;
 
 const setAdminMenus = async () => {
     const ListMenu: MenuTypes[] = [
@@ -13,23 +13,54 @@ const setAdminMenus = async () => {
             icon: <BsHouseDoor />,
         },
         {
-            name: "Orders",
-            href: createUrl("/projects"),
+            name: "Pengiriman",
             icon: <BsBook />,
-        },
-        {
-            name: "Categories",
-            icon: <BsBook />,
+            slug: "shipping",
             subMenus: [
                 {
-                    name: "All Categories",
+                    name: "Kecamatan",
+                    href: createUrl("/shipping/subDistricts"),
+                },
+                {
+                    name: "Kelurahan",
+                    href: createUrl("/shipping/sub"),
+                },
+            ],
+        },
+        {
+            name: "Kategori",
+            icon: <BsBook />,
+            slug: "categories",
+            subMenus: [
+                {
+                    name: "Daftar Kategori",
                     href: createUrl("/categories/all"),
                 },
                 {
-                    name: "Sub Categories",
+                    name: "Sub Kategori",
                     href: createUrl("/categories/sub"),
                 },
             ],
+        },
+        {
+            name: "Produk",
+            icon: <BsBook />,
+            slug: "produk",
+            subMenus: [
+                {
+                    name: "Daftar Kategori",
+                    href: createUrl("/categories/all"),
+                },
+                {
+                    name: "Sub Kategori",
+                    href: createUrl("/categories/sub"),
+                },
+            ],
+        },
+        {
+            name: "Orders",
+            href: createUrl("/projects"),
+            icon: <BsBook />,
         },
     ];
 
