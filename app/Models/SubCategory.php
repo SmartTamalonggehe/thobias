@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 class SubCategory extends Model
 {
     use HasUuids;
+
+    // beloangTo category
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }

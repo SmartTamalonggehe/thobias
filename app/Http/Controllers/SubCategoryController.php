@@ -41,9 +41,10 @@ class SubCategoryController extends Controller
         $search = $request->search;
         $sortby = $request->sortby;
         $order = $request->order;
-        $data = SubCategory::where(function ($query) use ($search) {
-            $query->where('sub_category_nm', 'like', "%$search%");
-        })
+        $data = SubCategory::with('category')
+            ->where(function ($query) use ($search) {
+                $query->where('sub_category_nm', 'like', "%$search%");
+            })
             ->orderBy($sortby ?? 'sub_category_nm', $order ?? 'asc')
             ->paginate(10);
         return new CrudResource('success', 'Data SubCategory', $data);
@@ -70,7 +71,8 @@ class SubCategoryController extends Controller
         }
         SubCategory::create($data_req);
 
-        $data = SubCategory::latest()->first();
+        $data = SubCategory::with('category')
+            ->latest()->first();
 
         return new CrudResource('success', 'Data Berhasil Disimpan', $data);
     }
@@ -105,7 +107,8 @@ class SubCategoryController extends Controller
 
         SubCategory::find($id)->update($data_req);
 
-        $data = SubCategory::find($id);
+        $data = SubCategory::with('category')
+            ->find($id);
 
         return new CrudResource('success', 'Data Berhasil Diubah', $data);
     }

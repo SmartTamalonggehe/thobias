@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('sub_category_id')->constrained('sub_categories')->cascadeOnDelete();
             $table->string('product_nm');
-            $table->text('product_desc');
+            $table->text('product_desc')->nullable();
             $table->timestamps();
         });
     }

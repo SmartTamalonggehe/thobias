@@ -7,10 +7,12 @@ Route::get('/', function () {
     return Inertia::render('Dashboard');
 });
 
-// group shipping
-Route::prefix('shipping')->group(function () {
-    //    resources
-    Route::resources([
-        'subDistricts' => App\Http\Controllers\SubDistrictController::class
-    ]);
-});
+Route::resources([
+    'subDistricts' => App\Http\Controllers\SubDistrictController::class,
+    'villages' => App\Http\Controllers\VillageController::class,
+    'categories' => App\Http\Controllers\CategoryController::class,
+    'subCategories' => App\Http\Controllers\SubCategoryController::class,
+    'products' => App\Http\Controllers\ProductController::class,
+    'productVariants' => App\Http\Controllers\ProductVariantController::class,
+    'productImages' => App\Http\Controllers\ProductImageController::class,
+]);
