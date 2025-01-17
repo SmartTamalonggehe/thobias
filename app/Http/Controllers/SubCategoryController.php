@@ -4,15 +4,49 @@ namespace App\Http\Controllers;
 
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
+use App\Http\Resources\CrudResource;
+use Illuminate\Support\Facades\Validator;
 
 class SubCategoryController extends Controller
 {
+    protected function spartaValidation($request, $id = "")
+    {
+        $required = "";
+        if ($id == "") {
+            $required = "required";
+        }
+        $rules = [
+            'sub_category_nm' => 'required',
+        ];
+
+        $messages = [
+            'sub_category_nm.required' => 'Nama sub kategori harus diisi.',
+        ];
+        $validator = Validator::make($request, $rules, $messages);
+
+        if ($validator->fails()) {
+            $message = [
+                'judul' => 'Gagal',
+                'type' => 'error',
+                'message' => $validator->errors()->first(),
+            ];
+            return response()->json($message, 400);
+        }
+    }
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $search = $request->search;
+        $sortby = $request->sortby;
+        $order = $request->order;
+        $data = SubCategory::where(function ($query) use ($search) {
+            $query->where('sub_category_nm', 'like', "%$search%");
+        })
+            ->orderBy($sortby ?? 'sub_category_nm', $order ?? 'asc')
+            ->paginate(10);
+        return new CrudResource('success', 'Data SubCategory', $data);
     }
 
     /**
@@ -28,13 +62,23 @@ class SubCategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data_req = $request->all();
+        // return $data_req;
+        $validate = $this->spartaValidation($data_req);
+        if ($validate) {
+            return $validate;
+        }
+        SubCategory::create($data_req);
+
+        $data = SubCategory::latest()->first();
+
+        return new CrudResource('success', 'Data Berhasil Disimpan', $data);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(SubCategory $subCategory)
+    public function show(string $id)
     {
         //
     }
@@ -42,7 +86,7 @@ class SubCategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(SubCategory $subCategory)
+    public function edit(string $id)
     {
         //
     }
@@ -50,16 +94,31 @@ class SubCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, SubCategory $subCategory)
+    public function update(Request $request, string $id)
     {
-        //
+        $data_req = $request->all();
+        // return $data_req;
+        $validate = $this->spartaValidation($data_req, $id);
+        if ($validate) {
+            return $validate;
+        }
+
+        SubCategory::find($id)->update($data_req);
+
+        $data = SubCategory::find($id);
+
+        return new CrudResource('success', 'Data Berhasil Diubah', $data);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(SubCategory $subCategory)
+    public function destroy(string $id)
     {
-        //
+        $data = SubCategory::findOrFail($id);
+        // delete data
+        $data->delete();
+
+        return new CrudResource('success', 'Data Berhasil Dihapus', $data);
     }
 }

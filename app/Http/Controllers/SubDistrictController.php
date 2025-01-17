@@ -2,22 +2,52 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
 use App\Models\SubDistrict;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
+use App\Http\Resources\CrudResource;
+use Illuminate\Support\Facades\Validator;
 
 class SubDistrictController extends Controller
 {
+    protected function spartaValidation($request, $id = "")
+    {
+        $required = "";
+        if ($id == "") {
+            $required = "required";
+        }
+        $rules = [
+            'sub_district_nm' => 'required',
+        ];
+
+        $messages = [
+            'sub_district_nm.required' => 'Nama Kecamatan harus diisi.',
+        ];
+        $validator = Validator::make($request, $rules, $messages);
+
+        if ($validator->fails()) {
+            $message = [
+                'judul' => 'Gagal',
+                'type' => 'error',
+                'message' => $validator->errors()->first(),
+            ];
+            return response()->json($message, 400);
+        }
+    }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $limit = $request->query('limit', 10);
-        $data = SubDistrict::paginate($limit);
-        return Inertia::render('shipping/subDistrict/Index', [
-            'data' => $data
-        ]);
+        $search = $request->search;
+        $sortby = $request->sortby;
+        $order = $request->order;
+        $data = SubDistrict::where(function ($query) use ($search) {
+            $query->where('sub_district_nm', 'like', "%$search%");
+        })
+            ->orderBy($sortby ?? 'sub_district_nm', $order ?? 'asc')
+            ->paginate(10);
+        return new CrudResource('success', 'Data SubDistrict', $data);
     }
 
     /**
@@ -33,13 +63,23 @@ class SubDistrictController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data_req = $request->all();
+        // return $data_req;
+        $validate = $this->spartaValidation($data_req);
+        if ($validate) {
+            return $validate;
+        }
+        SubDistrict::create($data_req);
+
+        $data = SubDistrict::latest()->first();
+
+        return new CrudResource('success', 'Data Berhasil Disimpan', $data);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(SubDistrict $subDistrict)
+    public function show(string $id)
     {
         //
     }
@@ -47,7 +87,7 @@ class SubDistrictController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(SubDistrict $subDistrict)
+    public function edit(string $id)
     {
         //
     }
@@ -55,16 +95,31 @@ class SubDistrictController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, SubDistrict $subDistrict)
+    public function update(Request $request, string $id)
     {
-        //
+        $data_req = $request->all();
+        // return $data_req;
+        $validate = $this->spartaValidation($data_req, $id);
+        if ($validate) {
+            return $validate;
+        }
+
+        SubDistrict::find($id)->update($data_req);
+
+        $data = SubDistrict::find($id);
+
+        return new CrudResource('success', 'Data Berhasil Diubah', $data);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(SubDistrict $subDistrict)
+    public function destroy(string $id)
     {
-        //
+        $data = SubDistrict::findOrFail($id);
+        // delete data
+        $data->delete();
+
+        return new CrudResource('success', 'Data Berhasil Dihapus', $data);
     }
 }
