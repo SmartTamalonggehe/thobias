@@ -16,11 +16,11 @@ class ProductVariantController extends Controller
             $required = "required";
         }
         $rules = [
-            'variant_nm' => 'required',
+            'product_id' => 'required',
         ];
 
         $messages = [
-            'variant_nm.required' => 'Nama ProductVariant harus diisi.',
+            'product_id.required' => 'Nama ProductVariant harus diisi.',
         ];
 
         $validator = Validator::make($request, $rules, $messages);
@@ -45,12 +45,12 @@ class ProductVariantController extends Controller
         $product_id = $request->product_id;
         $data = ProductVariant::with('product')
             ->where(function ($query) use ($search) {
-                $query->where('variant_nm', 'like', "%$search%");
+                $query->where('product_id', 'like', "%$search%");
             })
             ->where(function ($query) use ($product_id) {
                 $query->where('product_id', $product_id);
             })
-            ->orderBy($sortby ?? 'variant_nm', $order ?? 'asc')
+            ->orderBy($sortby ?? 'created_at', $order ?? 'desc')
             ->paginate(10);
         return new CrudResource('success', 'Data ProductVariant', $data);
     }

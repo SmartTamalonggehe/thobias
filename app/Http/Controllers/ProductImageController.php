@@ -27,11 +27,11 @@ class ProductImageController extends Controller
             $required = "required";
         }
         $rules = [
-            'position' => 'required',
+            'is_main' => 'required',
         ];
 
         $messages = [
-            'position.required' => 'Nama ProductImage harus diisi.',
+            'is_main.required' => 'Nama ProductImage harus diisi.',
         ];
         $validator = Validator::make($request, $rules, $messages);
 
@@ -55,12 +55,12 @@ class ProductImageController extends Controller
         $product_variant_id = $request->product_variant_id;
         $data = ProductImage::with('productVariant')
             ->where(function ($query) use ($search) {
-                $query->where('position', 'like', "%$search%");
+                $query->where('is_main', 'like', "%$search%");
             })
             ->where(function ($query) use ($product_variant_id) {
                 $query->where('product_variant_id', $product_variant_id);
             })
-            ->orderBy($sortby ?? 'position', $order ?? 'asc')
+            ->orderBy($sortby ?? 'is_main', $order ?? 'asc')
             ->paginate(10);
         return new CrudResource('success', 'Data ProductImage', $data);
     }
@@ -101,7 +101,7 @@ class ProductImageController extends Controller
 
                     // Buat entri baru di ProductImage untuk setiap gambar
                     ProductImage::create([
-                        'position' => $data_req['position'],
+                        'is_main' => $data_req['is_main'],
                         'product_variant_id' => $data_req['product_variant_id'],
                         'product_img' => "storage/$product_img",
                     ]);

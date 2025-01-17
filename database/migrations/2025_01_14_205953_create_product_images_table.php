@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('product_variant_id')->constrained('product_variants')->cascadeOnDelete()->nullable();
             $table->string('product_img');
-            $table->boolean('is_main')->default(false);
+            $table->string('is_main')->default(false);
             $table->timestamps();
         });
     }
