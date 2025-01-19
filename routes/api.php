@@ -1,8 +1,20 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:api');
+// api prefix categories
+Route::prefix('categories')->group(function () {
+    Route::get('/', [App\Http\Controllers\API\CategoryAPI::class, 'index']);
+});
+
+// api prefix subcategories
+Route::prefix('subCategories')->group(function () {
+    Route::get('/', [App\Http\Controllers\API\SubCategoryAPI::class, 'index']);
+    Route::get('/all', [App\Http\Controllers\API\SubCategoryAPI::class, 'all']);
+});
+
+// api prefix products
+Route::prefix('products')->group(function () {
+    Route::get('/', [App\Http\Controllers\API\ProductAPI::class, 'index']);
+    Route::get('/all', [App\Http\Controllers\API\ProductAPI::class, 'all']);
+});

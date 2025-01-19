@@ -16,7 +16,7 @@ class Product extends Model
     }
 
     // hasMany productVariants
-    public function productVariants()
+    public function productVariant()
     {
         return $this->hasMany(ProductVariant::class);
     }
