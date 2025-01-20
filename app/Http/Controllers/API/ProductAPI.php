@@ -17,7 +17,7 @@ class ProductAPI extends Controller
         $sub_category_id = $request->sub_category_id;
         $category_id = $request->category_id;
         $limit = $request->limit ?? 10;
-        $data = Product::with(['subCategory.category', 'productVariant.productImage'])
+        $data = Product::with(['subCategory.category', 'productVariant', 'productImage'])
             ->where(function ($query) use ($search) {
                 $query->where('product_nm', 'like', "%$search%");
             })
@@ -41,7 +41,7 @@ class ProductAPI extends Controller
         $order = $request->order;
         $sub_category_id = $request->sub_category_id;
         $category_id = $request->category_id;
-        $data = Product::with(['subCategory.category', 'productVariant.productImage'])
+        $data = Product::with(['subCategory.category', 'productVariant', 'productImage'])
             ->where(function ($query) use ($search) {
                 $query->where('product_nm', 'like', "%$search%");
             })

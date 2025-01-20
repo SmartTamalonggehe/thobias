@@ -20,4 +20,10 @@ class Product extends Model
     {
         return $this->hasMany(ProductVariant::class);
     }
+
+    // hasMany
+    public function productImage()
+    {
+        return $this->hasMany(ProductImage::class);
+    }
 }

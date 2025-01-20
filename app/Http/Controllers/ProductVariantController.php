@@ -4,11 +4,21 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ProductVariant;
+use Illuminate\Support\Facades\DB;
 use App\Http\Resources\CrudResource;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\TOOLS\ImgToolsController;
 
 class ProductVariantController extends Controller
 {
+    protected $imgController;
+    // make construct
+    public function __construct()
+    {
+        // memanggil controller image
+        $this->imgController = new ImgToolsController();
+    }
     protected function spartaValidation($request, $id = "")
     {
         $required = "";
@@ -74,12 +84,34 @@ class ProductVariantController extends Controller
         if ($validate) {
             return $validate;
         }
-        ProductVariant::create($data_req);
+        DB::beginTransaction();
+        try {
+            // export foto
+            if ($request->hasFile('variant_img')) {
 
-        $data = ProductVariant::with('product')
-            ->latest()->first();
-
-        return new CrudResource('success', 'Data Berhasil Disimpan', $data);
+                $variant_img = $this->imgController->addImage('variant_img', $data_req['variant_img']);
+                // jika foto gagal di upload
+                if (!$variant_img) {
+                    DB::rollback();
+                    return new CrudResource('error', 'Gagal Upload Foto', null);
+                }
+                $data_req['variant_img'] = "storage/$variant_img";
+            }
+            ProductVariant::create($data_req);
+            $data = ProductVariant::with('product')
+                ->latest()->first();
+            DB::commit();
+            return new CrudResource('success', 'Data Berhasil Disimpan', $data);
+        } catch (\Throwable $th) {
+            // jika terdapat kesalahan
+            DB::rollback();
+            $message = [
+                'judul' => 'Gagal',
+                'type' => 'error',
+                'message' => $th->getMessage(),
+            ];
+            return response()->json($message, 400);
+        }
     }
 
     /**
@@ -111,13 +143,42 @@ class ProductVariantController extends Controller
         if ($validate) {
             return $validate;
         }
+        DB::beginTransaction();
+        try {
+            $data = ProductVariant::findOrFail($id);
+            // find file variant_img
+            $variant_img = $data->variant_img;
+            // export variant_img
+            if ($request->hasFile('variant_img')) {
+                // remove file variant_img jika ada
+                if ($variant_img) {
+                    File::delete($variant_img);
+                }
+                $variant_img = $this->imgController->addImage('variant_img', $data_req['variant_img']);
+                if (!$variant_img) {
+                    return new CrudResource('error', 'Gagal Upload Variant_img', null);
+                }
+                $data_req['variant_img'] = "storage/$variant_img";
+            } else {
+                $data_req['variant_img'] = $variant_img;
+            }
+            // update data
+            ProductVariant::find($id)->update($data_req);
 
-        ProductVariant::find($id)->update($data_req);
-
-        $data = ProductVariant::with('product')
-            ->find($id);
-
-        return new CrudResource('success', 'Data Berhasil Diubah', $data);
+            $data = ProductVariant::with('product')
+                ->find($id);
+            DB::commit();
+            return new CrudResource('success', 'Data Berhasil Diubah', $data);
+        } catch (\Throwable $th) {
+            // jika terdapat kesalahan
+            DB::rollback();
+            $message = [
+                'judul' => 'Gagal',
+                'type' => 'error',
+                'message' => $th->getMessage(),
+            ];
+            return response()->json($message, 400);
+        }
     }
 
     /**
@@ -125,7 +186,14 @@ class ProductVariantController extends Controller
      */
     public function destroy(string $id)
     {
+        // delete data productVariant
         $data = ProductVariant::findOrFail($id);
+        // get foto productVariant
+        $variant_img = $data->variant_img;
+        // remove variant_img
+        if ($variant_img) {
+            File::delete($variant_img);
+        }
         // delete data
         $data->delete();
 

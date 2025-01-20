@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('size')->nullable();
             $table->integer('price');
             $table->integer('stock');
+            $table->string('variant_img')->nullable();
             $table->timestamps();
         });
     }

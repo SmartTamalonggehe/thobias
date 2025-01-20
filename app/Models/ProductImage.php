@@ -9,9 +9,9 @@ class ProductImage extends Model
 {
     use HasUuids;
 
-    // belongsTo productVariant
-    public function productVariant()
+    // belongsTo product
+    public function product()
     {
-        return $this->belongsTo(ProductVariant::class);
+        return $this->belongsTo(Product::class);
     }
 }

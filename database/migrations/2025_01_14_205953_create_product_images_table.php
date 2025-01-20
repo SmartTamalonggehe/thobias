@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('product_images', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('product_variant_id')->constrained('product_variants')->cascadeOnDelete()->nullable();
+            $table->foreignUuid('product_id')->constrained()->cascadeOnDelete()->nullable();
             $table->string('product_img');
-            $table->string('is_main')->default(false);
+            $table->boolean('is_main')->default(false);
             $table->timestamps();
         });
     }

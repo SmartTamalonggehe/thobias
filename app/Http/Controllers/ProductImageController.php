@@ -52,13 +52,13 @@ class ProductImageController extends Controller
         $search = $request->search;
         $sortby = $request->sortby;
         $order = $request->order;
-        $product_variant_id = $request->product_variant_id;
-        $data = ProductImage::with('productVariant')
+        $product_id = $request->product_id;
+        $data = ProductImage::with('product')
             ->where(function ($query) use ($search) {
                 $query->where('is_main', 'like', "%$search%");
             })
-            ->where(function ($query) use ($product_variant_id) {
-                $query->where('product_variant_id', $product_variant_id);
+            ->where(function ($query) use ($product_id) {
+                $query->where('product_id', $product_id);
             })
             ->orderBy($sortby ?? 'is_main', $order ?? 'asc')
             ->paginate(10);
@@ -102,14 +102,14 @@ class ProductImageController extends Controller
                     // Buat entri baru di ProductImage untuk setiap gambar
                     ProductImage::create([
                         'is_main' => $data_req['is_main'],
-                        'product_variant_id' => $data_req['product_variant_id'],
+                        'product_id' => $data_req['product_id'],
                         'product_img' => "storage/$product_img",
                     ]);
                 }
             }
             // get last data
-            $data = ProductImage::with('productVariant')
-                ->where('product_variant_id', $data_req['product_variant_id'])->latest()->get();
+            $data = ProductImage::with('product')
+                ->where('product_id', $data_req['product_id'])->latest()->get();
             // add options
             DB::commit();
             return new CrudResource('success', 'Data Berhasil Disimpan', $data);
@@ -156,7 +156,7 @@ class ProductImageController extends Controller
         unset($data_req['_method']);
         DB::beginTransaction();
         try {
-            $productImage = ProductImage::with('productVariant')
+            $productImage = ProductImage::with('product')
                 ->findOrFail($id);
             // find file product_img
             $product_img = $productImage->product_img;
