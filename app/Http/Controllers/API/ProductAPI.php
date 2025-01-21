@@ -29,6 +29,7 @@ class ProductAPI extends Controller
                     $query->where('category_id', $category_id);
                 });
             })
+            ->whereHas('productVariant')
             ->orderBy($sortby ?? 'created_at', $order ?? 'desc')
             ->paginate($limit);
         return new CrudResource('success', 'Data Product', $data);
@@ -53,6 +54,7 @@ class ProductAPI extends Controller
                     $query->where('category_id', $category_id);
                 });
             })
+            ->whereHas('productVariant')
             ->orderBy($sortby ?? 'created_at', $order ?? 'desc')
             ->get();
         return new CrudResource('success', 'Data Product', $data);

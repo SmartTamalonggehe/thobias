@@ -143,6 +143,8 @@ class ProductVariantController extends Controller
         if ($validate) {
             return $validate;
         }
+        // unset method
+        unset($data_req['_method']);
         DB::beginTransaction();
         try {
             $data = ProductVariant::findOrFail($id);
