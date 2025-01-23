@@ -19,6 +19,7 @@ class ProductVariantController extends Controller
         // memanggil controller image
         $this->imgController = new ImgToolsController();
     }
+    // sparta validation
     protected function spartaValidation($request, $id = "")
     {
         $required = "";
@@ -42,6 +43,26 @@ class ProductVariantController extends Controller
                 'message' => $validator->errors()->first(),
             ];
             return response()->json($message, 400);
+        }
+
+        // Cek kombinasi unik hanya jika color dan size diisi
+        if (!empty($request['color']) && !empty($request['size'])) {
+            $exists = DB::table('product_variants')
+                ->where('product_id', $request['product_id'])
+                ->where('color', $request['color'])
+                ->where('size', $request['size'])
+                ->when($id, function ($query) use ($id) {
+                    return $query->where('id', '!=', $id);
+                })
+                ->exists();
+
+            if ($exists) {
+                return response()->json([
+                    'judul' => 'Gagal',
+                    'type' => 'error',
+                    'message' => 'Kombinasi warna dan ukuran sudah ada untuk produk ini.'
+                ], 400);
+            }
         }
     }
     /**

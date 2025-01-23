@@ -20,6 +20,8 @@ return new class extends Migration
             $table->integer('stock');
             $table->string('variant_img')->nullable();
             $table->timestamps();
+            // Tambahkan constraint unik
+            $table->unique(['product_id', 'color', 'size'], 'unique_product_variant');
         });
     }
 
