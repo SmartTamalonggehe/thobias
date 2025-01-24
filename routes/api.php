@@ -18,3 +18,9 @@ Route::prefix('products')->group(function () {
     Route::get('/', [App\Http\Controllers\API\ProductAPI::class, 'index']);
     Route::get('/all', [App\Http\Controllers\API\ProductAPI::class, 'all']);
 });
+
+Route::prefix('carts')->middleware('auth:api')->group(function () {
+    Route::get('/', [App\Http\Controllers\API\CartAPI::class, 'index']);
+    Route::post('/', [App\Http\Controllers\API\CartAPI::class, 'store']);
+    Route::delete('/', [App\Http\Controllers\API\CartAPI::class, 'destroy']);
+});

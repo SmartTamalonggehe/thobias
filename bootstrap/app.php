@@ -11,8 +11,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function ($router) {
             Route::middleware('web')
-                ->prefix('user')
-                ->name('user')
+                ->name('web')
                 ->group(base_path('routes/web.php'));
 
             Route::prefix('auth')
