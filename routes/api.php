@@ -23,4 +23,5 @@ Route::prefix('carts')->middleware('auth:api')->group(function () {
     Route::get('/', [App\Http\Controllers\API\CartAPI::class, 'index']);
     Route::post('/', [App\Http\Controllers\API\CartAPI::class, 'store']);
     Route::delete('/', [App\Http\Controllers\API\CartAPI::class, 'destroy']);
+    Route::post('/costumeQuantity', [App\Http\Controllers\API\CartAPI::class, 'costumeQuantity']);
 });
