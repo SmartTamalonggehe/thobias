@@ -12,7 +12,8 @@ class CartAPI
 {
     public function index(Request $request)
     {
-        $cartItems = Cart::where('user_id', Auth::id())->get();
+        $cartItems = Cart::with(['product.productImage', 'productVariant'])
+            ->where('user_id', Auth::id())->get();
         return new CrudResource('success', 'Data Cart', $cartItems);
     }
 

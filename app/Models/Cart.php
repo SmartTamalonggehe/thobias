@@ -9,9 +9,15 @@ class Cart extends Model
 {
     use HasUuids;
 
-    // belongsTo productVariant
+    // hasOne product
+    public function product()
+    {
+        return $this->hasOne(Product::class, 'id', 'product_id');
+    }
+
+    // hasOne productVariant
     public function productVariant()
     {
-        return $this->belongsTo(ProductVariant::class);
+        return $this->hasOne(ProductVariant::class, 'id', 'product_variant_id');
     }
 }
