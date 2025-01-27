@@ -51,4 +51,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // has Many Recipient
+    public function recipient()
+    {
+        return $this->hasMany(Recipient::class);
+    }
 }

@@ -15,6 +15,12 @@ class OrderItem extends Model
         return $this->belongsTo(ProductVariant::class);
     }
 
+    // has one to product
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
     // belongsTo order
     public function order()
     {

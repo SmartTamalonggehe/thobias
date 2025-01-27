@@ -21,4 +21,11 @@ class VillageAPI extends Controller
             ->paginate(10);
         return new CrudResource('success', 'Data Village', $data);
     }
+
+    // all
+    public function all()
+    {
+        $data = Village::with('subDistrict')->get();
+        return new CrudResource('success', 'Data Village', $data);
+    }
 }
