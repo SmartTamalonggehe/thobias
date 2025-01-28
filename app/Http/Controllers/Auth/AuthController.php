@@ -148,7 +148,6 @@ class AuthController
                 'message' => 'Token telah kedaluwarsa silahkan login kembali',
             ], 401);
         }
-
         return response()->json([
             'status' => true,
             'expires_at' => $token->expires_at,
@@ -157,6 +156,7 @@ class AuthController
             'user' => [
                 'id' => $user->id,
                 'email' => $user->email,
+                'name' => $user->name
             ]
         ]);
     }

@@ -60,9 +60,9 @@ class PaymentAPI extends Controller
                 'duration' => 60 // Durasi kedaluwarsa, contoh 60 menit
             ],
             'callbacks' => [
-                'finish' => env('APP_URL') . '/api/payment/finish',
-                'error' => env('APP_URL') . '/api/payment/error',
-                'pending' => env('APP_URL') . '/api/payment/pending'
+                'finish' => env('APP_URL') . '/account?tab=orders',
+                'error' => env('APP_URL') . '/account?tab=error',
+                'pending' => env('APP_URL') . '/account?tab=orders'
             ]
 
         ];

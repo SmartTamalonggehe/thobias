@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 // api prefix categories
 Route::prefix('categories')->group(function () {
     Route::get('/', [App\Http\Controllers\API\CategoryAPI::class, 'index']);
+    Route::get('/all', [App\Http\Controllers\API\CategoryAPI::class, 'all']);
 });
 
 // api prefix subcategories

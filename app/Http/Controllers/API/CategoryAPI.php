@@ -21,4 +21,17 @@ class CategoryAPI extends Controller
             ->paginate(10);
         return new CrudResource('success', 'Data Category', $data);
     }
+    public function all(Request $request)
+    {
+        $search = $request->search;
+        $sortby = $request->sortby;
+        $order = $request->order;
+        $data = Category::with(['subCategory.product.productVariant', 'subCategory.product.productImage'])
+            ->where(function ($query) use ($search) {
+                $query->where('category_nm', 'like', "%$search%");
+            })
+            ->orderBy($sortby ?? 'category_nm', $order ?? 'asc')
+            ->get();
+        return new CrudResource('success', 'Data Category', $data);
+    }
 }

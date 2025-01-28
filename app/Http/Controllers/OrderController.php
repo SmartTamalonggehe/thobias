@@ -64,6 +64,7 @@ class OrderController extends Controller
             ->when($status, function ($query) use ($status) {
                 $query->whereIn('status', $status);
             })
+            ->orderBy('created_at', 'desc')
             ->get();
 
         return new CrudResource('success', 'Data Order', $orders);

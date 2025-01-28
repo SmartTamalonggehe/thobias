@@ -28,9 +28,13 @@ class SubCategoryAPI extends Controller
         $search = $request->search;
         $sortby = $request->sortby;
         $order = $request->order;
+        $category_id = $request->category_id;
         $data = SubCategory::with('category')
             ->where(function ($query) use ($search) {
                 $query->where('sub_category_nm', 'like', "%$search%");
+            })
+            ->when($category_id, function ($query) use ($category_id) {
+                $query->where('category_id', $category_id);
             })
             ->orderBy($sortby ?? 'sub_category_nm', $order ?? 'asc')
             ->get();
