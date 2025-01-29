@@ -18,6 +18,7 @@ Route::prefix('subCategories')->group(function () {
 Route::prefix('products')->group(function () {
     Route::get('/', [App\Http\Controllers\API\ProductAPI::class, 'index']);
     Route::get('/all', [App\Http\Controllers\API\ProductAPI::class, 'all']);
+    Route::get('/detail/{id}', [App\Http\Controllers\API\ProductAPI::class, 'detail']);
 });
 
 // api prefix villages
