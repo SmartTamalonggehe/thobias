@@ -60,7 +60,7 @@ class ProductAPI extends Controller
     // detail
     public function detail($id)
     {
-        $data = Product::with(['subCategory.category', 'productVariant', 'productImage'])->find($id);
+        $data = Product::with(['subCategory.category', 'productVariant', 'productImage', 'review.product', 'review.productVariant'])->find($id);
         return new CrudResource('success', 'Data Product', $data);
     }
 }

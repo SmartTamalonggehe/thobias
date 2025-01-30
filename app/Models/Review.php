@@ -9,10 +9,16 @@ class Review extends Model
 {
     use HasUuids;
 
-    // belongsTo product
+    // belongsTo product variant
     public function productVariant()
     {
         return $this->belongsTo(ProductVariant::class);
+    }
+
+    // belongsTo product
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
     }
 
     // belongsTo user
