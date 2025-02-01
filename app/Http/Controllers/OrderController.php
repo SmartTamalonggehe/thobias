@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewOrderEvent;
 use App\Http\Resources\CrudResource;
 use App\Models\Cart;
 use App\Models\Order;
@@ -111,6 +112,7 @@ class OrderController extends Controller
                 // delete cart
             }
             Cart::where('user_id', $request->user_id)->delete();
+            event(new NewOrderEvent($order));
             DB::commit();
             return new CrudResource('success', 'Data Berhasil Disimpan', $order->load('orderItems'));
         } catch (\Throwable $th) {
