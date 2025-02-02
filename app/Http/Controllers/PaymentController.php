@@ -14,16 +14,16 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        // try {
-        //     $result = event(new NewOrderEvent([
-        //         'data' => 1,
-        //     ]));
-        //     Log::info('Event dispatched', ['result' => $result]);
-        //     return response()->json(['status' => 'success']);
-        // } catch (\Exception $e) {
-        //     Log::error('Event dispatch error', ['error' => $e->getMessage()]);
-        //     return response()->json(['error' => $e->getMessage()], 500);
-        // }
+        try {
+            $result = event(new NewOrderEvent([
+                'data' => 1,
+            ]));
+            Log::info('Event dispatched', ['result' => $result]);
+            return response()->json(['status' => 'success']);
+        } catch (\Exception $e) {
+            Log::error('Event dispatch error', ['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**

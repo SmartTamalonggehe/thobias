@@ -58,7 +58,7 @@ class PaymentAPI extends Controller
             'expiry' => [
                 'start_time' => date("Y-m-d H:i:s T"), // Waktu mulai transaksi
                 'unit' => 'minute', // Unit waktu kedaluwarsa (minute, hour, day)
-                'duration' => 60 // Durasi kedaluwarsa, contoh 60 menit
+                'duration' => 120 // Durasi kedaluwarsa, contoh 60 menit
             ],
             'callbacks' => [
                 'finish' => env('APP_URL') . '/account?tab=orders',
