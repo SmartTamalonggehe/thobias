@@ -4,39 +4,43 @@ namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
-class NewOrderEvent
+class NewOrderEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $order;
-
-    public function __construct($order)
+    public $data;
+    /**
+     * Create a new event instance.
+     */
+    public function __construct($data)
     {
-        $this->order = $order;
+        $this->data = $data;
+        Log::info('NewOrderEvent triggered', ['data' => $data]);
     }
 
     public function broadcastOn()
     {
-        return new Channel('orders');
+        try {
+            Log::info('Broadcasting on orders channel');
+            return new Channel('orders');
+        } catch (\Exception $e) {
+            Log::error('Broadcast error', ['error' => $e->getMessage()]);
+            throw $e;
+        }
     }
 
     public function broadcastAs()
     {
-        return 'new-order';
+        return 'new_order';
     }
 
     public function broadcastWith()
     {
-        return [
-            'id' => $this->order->id,
-            'shipping_cost' => $this->order->shipping_cost,
-            'nm_recipient' => $this->order->nm_recipient,
-        ];
+        return $this->data;
     }
 }

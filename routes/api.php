@@ -54,5 +54,12 @@ Route::group(['prefix' => 'orders'], function () {
     Route::post('update/{id}', [App\Http\Controllers\API\OrderAPI::class, 'update'])->name('orders.update');
 });
 
-Route::post('/notifications/send', [App\Http\Controllers\NotificationController::class, 'sendNotification']);
-Route::post('/notifications/send-multiple', [App\Http\Controllers\NotificationController::class, 'sendMultipleNotifications']);
+// notifications
+route::group(['prefix' => 'notifications'], function () {
+    Route::get('/', [App\Http\Controllers\API\NotificationAPI::class, 'index']);
+    Route::get('/all', [App\Http\Controllers\API\NotificationAPI::class, 'all']);
+    Route::post('/', [App\Http\Controllers\API\NotificationAPI::class, 'store']);
+    Route::post('/update/{id}', [App\Http\Controllers\API\NotificationAPI::class, 'update']);
+    Route::post('/send', [App\Http\Controllers\NotificationController::class, 'sendNotification']);
+    Route::post('/send-multiple', [App\Http\Controllers\NotificationController::class, 'sendMultipleNotifications']);
+});

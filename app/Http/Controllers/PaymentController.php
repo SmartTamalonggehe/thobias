@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewOrderEvent;
 use App\Models\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
@@ -12,7 +14,16 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        //
+        // try {
+        //     $result = event(new NewOrderEvent([
+        //         'data' => 1,
+        //     ]));
+        //     Log::info('Event dispatched', ['result' => $result]);
+        //     return response()->json(['status' => 'success']);
+        // } catch (\Exception $e) {
+        //     Log::error('Event dispatch error', ['error' => $e->getMessage()]);
+        //     return response()->json(['error' => $e->getMessage()], 500);
+        // }
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CrudResource;
+use App\Models\Notification;
 use App\Services\FCMService;
 use Illuminate\Http\Request;
 
@@ -9,7 +11,7 @@ class NotificationController extends Controller
 {
     protected $fcmService;
 
-    public function __construct(FCMService $fcmService)
+    public function __construct(FCMService $fcmService = null)
     {
         $this->fcmService = $fcmService;
     }

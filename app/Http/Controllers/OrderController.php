@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Events\NewOrderEvent;
+use App\Events\ShippingStatusEvent;
+use App\Http\Controllers\API\NotificationAPI;
 use App\Http\Resources\CrudResource;
 use App\Models\Cart;
 use App\Models\Order;
@@ -13,6 +15,12 @@ use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
+    protected $notification;
+    // constractor
+    public function __construct()
+    {
+        $this->notification = new NotificationAPI();
+    }
     protected function spartaValidation($request, $id = "")
     {
         $required = "";
@@ -112,7 +120,6 @@ class OrderController extends Controller
                 // delete cart
             }
             Cart::where('user_id', $request->user_id)->delete();
-            event(new NewOrderEvent($order));
             DB::commit();
             return new CrudResource('success', 'Data Berhasil Disimpan', $order->load('orderItems'));
         } catch (\Throwable $th) {
@@ -150,10 +157,20 @@ class OrderController extends Controller
             return $validate;
         }
 
-        ShippingStatus::find($id)->update([
+        $data = ShippingStatus::find($id)->update([
             'status' => $data_req['status'],
         ]);
+        // event
+        event(new ShippingStatusEvent($data));
 
+        // notification
+        $this->notification->store([
+            'type' => 'shipping_status',
+            'notifiable_type' => 'App\Models\ShippingStatus', // Tambahkan ini
+            'notifiable_id' => $data->id, // Tambahkan ini
+            'data' => json_encode($data), // encode data array ke JSON
+            'read' => false,
+        ]);
 
         return new CrudResource('success', 'Data Berhasil Diubah', []);
     }

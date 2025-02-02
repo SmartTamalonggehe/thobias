@@ -16,5 +16,6 @@ Route::resources([
     'productVariants' => App\Http\Controllers\ProductVariantController::class,
     'productImages' => App\Http\Controllers\ProductImageController::class,
     'orders' => App\Http\Controllers\OrderController::class,
-    'reviews' => App\Http\Controllers\ReviewController::class
+    'reviews' => App\Http\Controllers\ReviewController::class,
+    'payments' => App\Http\Controllers\PaymentController::class
 ]);

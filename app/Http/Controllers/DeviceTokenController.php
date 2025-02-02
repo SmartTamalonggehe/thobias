@@ -28,7 +28,14 @@ class DeviceTokenController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // create or update, upadate if user_id already exists
+        $data_req = $request->all();
+
+        DeviceToken::updateOrCreate([
+            'user_id' => $data_req['user_id'],
+        ], [
+            'fcm_token' => $data_req['fcm_token'],
+        ]);
     }
 
     /**

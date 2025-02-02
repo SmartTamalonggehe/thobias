@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Events\NewOrderEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\ShippingStatus;
@@ -12,11 +13,11 @@ use Midtrans\Snap;
 
 class PaymentAPI extends Controller
 {
-    protected $serverKey;
+    protected $serverKey, $notification;
     public function __construct()
     {
+        $this->notification = new NotificationAPI();
         // Konfigurasi Midtrans
-
         $this->serverKey = Config::$serverKey = Config::$serverKey = config('services.midtrans.server_key');
         Config::$isProduction = config('services.midtrans.is_production');
         Config::$isSanitized = config('services.midtrans.sanitized');
@@ -98,6 +99,17 @@ class PaymentAPI extends Controller
                         'order_id' => $request->order_id,
                         'user_id' => $order->user_id,
                         'status' => 'dikemas'
+                    ]);
+                    event(new NewOrderEvent([
+                        'data' => $order,
+                    ]));
+                    // notification
+                    $this->notification->store([
+                        'type' => 'new_order',
+                        'notifiable_type' => 'App\Models\Order', // Tambahkan ini
+                        'notifiable_id' => $order->id, // Tambahkan ini
+                        'data' => json_encode($order), // encode data array ke JSON
+                        'read' => false,
                     ]);
                     // reduce stock
                     foreach ($order->orderItems as $item) {
