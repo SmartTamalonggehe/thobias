@@ -11,12 +11,6 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController
 {
-    protected $deviceTokenController;
-    // constructer
-    public function __construct()
-    {
-        $this->deviceTokenController = new DeviceTokenController();
-    }
     protected function spartaValidation($request, $id = "")
     {
         $required = "";
@@ -85,8 +79,6 @@ class AuthController
         // add expires_at to token
         $token->token->expires_at = now()->addMonths(10);
         $token->token->save();
-
-        $this->deviceTokenController->store($user->id, $request->device_token);
 
         return response()->json([
             'status' => true,
