@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\DeviceTokenController;
 use App\Http\Resources\CrudResource;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -10,6 +11,12 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController
 {
+    protected $deviceTokenController;
+    // constructer
+    public function __construct()
+    {
+        $this->deviceTokenController = new DeviceTokenController();
+    }
     protected function spartaValidation($request, $id = "")
     {
         $required = "";
@@ -78,6 +85,8 @@ class AuthController
         // add expires_at to token
         $token->token->expires_at = now()->addMonths(10);
         $token->token->save();
+
+        $this->deviceTokenController->store($user->id, $request->device_token);
 
         return response()->json([
             'status' => true,
