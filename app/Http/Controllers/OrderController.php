@@ -190,7 +190,7 @@ class OrderController extends Controller
                 $body = "Anda Telah Menyelesaikan Pesanan. Silahkan berikan Ulasan";
             }
             $requestFCM->merge([
-                'token' => $deviceToken->token,
+                'token' => $deviceToken->fcm_token,
                 'title' => $data->status,
                 'body' => $body,
             ]);
