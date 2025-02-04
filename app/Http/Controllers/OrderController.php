@@ -7,6 +7,7 @@ use App\Events\ShippingStatusEvent;
 use App\Http\Controllers\API\NotificationAPI;
 use App\Http\Resources\CrudResource;
 use App\Models\Cart;
+use App\Models\DeviceToken;
 use App\Models\Order;
 use App\Models\ShippingStatus;
 use Illuminate\Http\Request;
@@ -15,11 +16,12 @@ use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
-    protected $notification;
+    protected $notification, $notificationController;
     // constractor
     public function __construct()
     {
         $this->notification = new NotificationAPI();
+        $this->notificationController = new NotificationController();
     }
     protected function spartaValidation($request, $id = "")
     {
@@ -171,6 +173,26 @@ class OrderController extends Controller
             'data' => json_encode($data), // encode data array ke JSON
             'read' => false,
         ]);
+
+        // find fcm token in deviceToken table
+        $deviceToken = DeviceToken::where('user_id', $data->user_id)->first();
+        $requestFCM = new Request();
+        $body = "";
+        if ($data->status == "dikemas") {
+            $body = "Pesanan Anda Sedang Di Proses. Silahkan Tunggu";
+        } elseif ($data->status == "dikirim") {
+            $body = "Pesanan Anda Sedang Dalam Pengiriman. Silahkan Tunggu";
+        } elseif ($data->status == "selesai") {
+            $body = "Anda Telah Menyelesaikan Pesanan. Silahkan berikan Ulasan";
+        }
+        $requestFCM->merge([
+            'token' => $deviceToken->token,
+            'title' => $data->status,
+            'body' => $body,
+        ]);
+
+
+        $this->notificationController->sendNotification($request);
 
         return new CrudResource('success', 'Data Berhasil Diubah', []);
     }
