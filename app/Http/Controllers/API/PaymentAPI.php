@@ -130,6 +130,17 @@ class PaymentAPI extends Controller
                         'user_id' => $order->user_id,
                         'status' => 'dikemas'
                     ]);
+                    event(new NewOrderEvent([
+                        'data' => $order,
+                    ]));
+                    // notification
+                    $this->notification->store([
+                        'type' => 'new_order',
+                        'notifiable_type' => 'App\Models\Order', // Tambahkan ini
+                        'notifiable_id' => $order->id, // Tambahkan ini
+                        'data' => json_encode($order), // encode data array ke JSON
+                        'read' => false,
+                    ]);
                     // reduce stock
                     foreach ($order->orderItems as $item) {
                         $productVariant = $item->productVariant;
