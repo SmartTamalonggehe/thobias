@@ -158,43 +158,53 @@ class OrderController extends Controller
         if ($validate) {
             return $validate;
         }
+        DB::beginTransaction();
+        try {
+            $data = ShippingStatus::find($id);
 
-        $data = ShippingStatus::find($id)->update([
-            'status' => $data_req['status'],
-        ]);
-        // event
-        event(new ShippingStatusEvent($data));
+            $data->update([
+                'status' => $data_req['status'],
+            ]);
 
-        // notification
-        $this->notification->store([
-            'type' => 'shipping_status',
-            'notifiable_type' => 'App\Models\ShippingStatus', // Tambahkan ini
-            'notifiable_id' => $data->id, // Tambahkan ini
-            'data' => json_encode($data), // encode data array ke JSON
-            'read' => false,
-        ]);
+            // event
+            event(new ShippingStatusEvent($data));
 
-        // find fcm token in deviceToken table
-        $deviceToken = DeviceToken::where('user_id', $data->user_id)->first();
-        $requestFCM = new Request();
-        $body = "";
-        if ($data->status == "dikemas") {
-            $body = "Pesanan Anda Sedang Di Proses. Silahkan Tunggu";
-        } elseif ($data->status == "dikirim") {
-            $body = "Pesanan Anda Sedang Dalam Pengiriman. Silahkan Tunggu";
-        } elseif ($data->status == "selesai") {
-            $body = "Anda Telah Menyelesaikan Pesanan. Silahkan berikan Ulasan";
+            // notification
+            $this->notification->store([
+                'type' => 'shipping_status',
+                'notifiable_type' => 'App\Models\ShippingStatus', // Tambahkan ini
+                'notifiable_id' => $id, // Tambahkan ini
+                'data' => json_encode($data), // encode data array ke JSON
+                'read' => false,
+            ]);
+
+            // find fcm token in deviceToken table
+            $deviceToken = DeviceToken::where('user_id', $data->user_id)->first();
+            $requestFCM = new Request();
+            $body = "";
+            if ($data->status == "dikemas") {
+                $body = "Pesanan Anda Sedang Di Proses. Silahkan Tunggu";
+            } elseif ($data->status == "dikirim") {
+                $body = "Pesanan Anda Sedang Dalam Pengiriman. Silahkan Tunggu";
+            } elseif ($data->status == "selesai") {
+                $body = "Anda Telah Menyelesaikan Pesanan. Silahkan berikan Ulasan";
+            }
+            $requestFCM->merge([
+                'token' => $deviceToken->token,
+                'title' => $data->status,
+                'body' => $body,
+            ]);
+
+
+            $this->notificationController->sendNotification($request);
+
+            DB::commit();
+            return new CrudResource('success', 'Data Berhasil Diubah', []);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            // error
+            return response()->json(['message' => $th->getMessage()], 422);
         }
-        $requestFCM->merge([
-            'token' => $deviceToken->token,
-            'title' => $data->status,
-            'body' => $body,
-        ]);
-
-
-        $this->notificationController->sendNotification($request);
-
-        return new CrudResource('success', 'Data Berhasil Diubah', []);
     }
 
     /**
