@@ -6,12 +6,13 @@ use App\Http\Resources\CrudResource;
 use App\Models\Notification;
 use App\Services\FCMService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class NotificationController extends Controller
 {
     protected $fcmService;
 
-    public function __construct(FCMService $fcmService = null)
+    public function __construct(FCMService $fcmService)
     {
         $this->fcmService = $fcmService;
     }

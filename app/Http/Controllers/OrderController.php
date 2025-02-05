@@ -16,13 +16,15 @@ use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
-    protected $notification, $notificationController;
-    // constractor
-    public function __construct()
+    protected $notification;
+    protected $notificationController;
+
+    public function __construct(NotificationAPI $notification, NotificationController $notificationController)
     {
-        $this->notification = new NotificationAPI();
-        $this->notificationController = new NotificationController();
+        $this->notification = $notification;
+        $this->notificationController = $notificationController;
     }
+
     protected function spartaValidation($request, $id = "")
     {
         $required = "";
@@ -196,10 +198,10 @@ class OrderController extends Controller
             ]);
 
 
-            $this->notificationController->sendNotification($request);
+            $this->notificationController->sendNotification($requestFCM);
 
             DB::commit();
-            return new CrudResource('success', 'Data Berhasil Diubah', []);
+            return new CrudResource('success', 'Data Berhasil Diubah', $data);
         } catch (\Throwable $th) {
             DB::rollBack();
             // error
