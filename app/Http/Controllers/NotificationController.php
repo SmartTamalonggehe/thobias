@@ -23,14 +23,19 @@ class NotificationController extends Controller
             'token' => 'required|string',
             'title' => 'required|string',
             'body' => 'required|string',
-            'data' => 'array|nullable'
         ]);
+
+        $url = config('app.url');
+        $data = [
+            'route' => "$url/notifications", // URL tujuan
+            'type' => 'navigation',
+        ];
 
         $result = $this->fcmService->sendNotification(
             $request->token,
             $request->title,
             $request->body,
-            $request->data ?? []
+            $data
         );
 
         return response()->json($result);
@@ -42,15 +47,19 @@ class NotificationController extends Controller
             'tokens' => 'required|array',
             'tokens.*' => 'string',
             'title' => 'required|string',
-            'body' => 'required|string',
-            'data' => 'array|nullable'
         ]);
+
+        $url = config('app.url');
+        $data = [
+            'route' => "$url/notifications", // URL tujuan
+            'type' => 'navigation',
+        ];
 
         $result = $this->fcmService->sendMultipleNotifications(
             $request->tokens,
             $request->title,
             $request->body,
-            $request->data ?? []
+            $data
         );
 
         return response()->json($result);
